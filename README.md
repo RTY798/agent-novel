@@ -1,9 +1,12 @@
 # Agent Novel Skill v9.0
 
-> Claude Code 万能小说创作技能。一个想法 → 自动生成全项目 → 写到完结。
+> 通用 AI Agent 小说创作技能。一个想法 → 自动生成全项目 → 写到完结。接入任意 Agent 即用。
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Claude Code Skill](https://img.shields.io/badge/Claude%20Code-Skill-blue)](https://claude.com/claude-code)
+[![Claude Code](https://img.shields.io/badge/Claude%20Code-Skill-blue)](https://claude.com/claude-code)
+[![Cursor](https://img.shields.io/badge/Cursor-Compatible-purple)](https://cursor.sh)
+[![Windsurf](https://img.shields.io/badge/Windsurf-Compatible-teal)](https://codeium.com/windsurf)
+[![Agent Ready](https://img.shields.io/badge/Any%20Agent-Ready-green)](#)
 
 <p align="center">
   <img src="assets/海报.png" alt="Agent Novel Skill" width="100%">
@@ -40,7 +43,7 @@ L1冻结摘要 → 每章300-500字·写定冻存·永不回改
 
 ## 30秒体验
 
-在 Claude Code 中输入：
+在你的 AI Agent 中输入（Claude Code / Cursor / Windsurf / 任意 Agent）：
 
 ```
 开始新小说项目
@@ -228,7 +231,9 @@ cd agent-novel
 bash install.sh
 ```
 
-在 Claude Code 中输入 `开始新小说项目` — skill 自动引导。不需要 Python、不需要 Node、不需要数据库。
+在你的 AI Agent 中输入 `开始新小说项目` — skill 自动引导。不需要 Python、不需要 Node、不需要数据库。
+
+**支持平台**：Claude Code · Cursor · Windsurf · 以及任意支持 skill/rule 目录的 AI Agent。放到 skill 目录 → 自动加载 → 即刻使用。
 
 ---
 
@@ -238,10 +243,12 @@ bash install.sh
 - 写作质量控制系统（规则过滤 + QC 检测 + 技法支撑）
 - 长篇连载项目管理工具（Bootstrap 生成 + 6 文件追踪 + L1 冻结摘要）
 - 写作技法知识库（7大板块，78章实战淬炼）
+- 通用 Agent Skill —— 放到任意 AI Agent 的 skill/rule 目录即用
 
 **不是**：
 - 不是一键生成整本小说的"AI 代笔"——AI 写初稿，你做决定
 - 不是"只有末世公路才能用"——v9.0 支持任意类型，靠建议不靠参数覆写
+- 不是 Claude Code 专属——任何支持 skill 目录的 AI Agent 都能用
 
 ## 适用场景
 

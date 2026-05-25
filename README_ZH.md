@@ -1,14 +1,16 @@
 # Agent Novel Skill v9.0 — 中文详细文档
 
-> Claude Code 万能小说创作技能。一个想法 → 4问 → 自动生成全项目 → 写到完结。78 章连载实战踩坑 → 万能化升级。
+> 通用 AI Agent 万能小说创作技能。一个想法 → 4问 → 自动生成全项目 → 写到完结。支持 Claude Code / Cursor / Windsurf / 任意 Agent。78 章连载实战踩坑 → 万能化升级。
 
 ---
 
 ## 这是什么
 
-Agent Novel Skill 是一份 Claude Code 的 skill 定义文件。放到 `~/.claude/skills/agent-novel/` 目录下，在 Claude Code 中输入 "开始新小说项目"，skill 自动引导 Bootstrap 流程——4个问题 → 自动生成全部项目文件（MASTER_SETTING + 6个追踪文件 + CLAUDE.md + .project.md）。然后说 "写第1章"，6条硬性规则 + 写作技法库 + 5层质检 + L1 冻结摘要，帮你完成从规划到质检的完整一章写作流程。
+Agent Novel Skill 是一份通用 AI Agent skill 定义文件。放到任意 Agent 的 skill/rule 目录下（Claude Code: `~/.claude/skills/agent-novel/`，Cursor: `.cursor/rules/`，Windsurf: `.windsurf/rules/`），输入 "开始新小说项目"，skill 自动引导 Bootstrap 流程——4个问题 → 自动生成全部项目文件（MASTER_SETTING + 6个追踪文件 + CLAUDE.md + .project.md）。然后说 "写第1章"，6条硬性规则 + 写作技法库 + 5层质检 + L1 冻结摘要，帮你完成从规划到质检的完整一章写作流程。
 
 **核心定位**：不是 AI 代笔。AI 写初稿，你做决定。这个 skill 的作用是——让 AI 写的初稿不那么"AI"，让你做决定时有数据支撑。
+
+**平台无关**：纯 Markdown + Bash 脚本。不依赖任何特定 Agent API。放到哪个 Agent 都能用——Claude Code、Cursor、Windsurf，以及任何支持 skill/rule 目录的 AI 编程助手。
 
 **v9.0 万能化**：支持任意类型（奇幻/都市/古风/科幻/悬疑/末世/言情/历史/武侠/轻小说）。规则基线不变，各类型调整建议在 `references/` 中按需读取——建议，非强制，作者裁决。
 
@@ -16,7 +18,7 @@ Agent Novel Skill 是一份 Claude Code 的 skill 定义文件。放到 `~/.clau
 
 ## 30秒体验
 
-在 Claude Code 中输入：
+在任意 AI Agent 中输入（Claude Code / Cursor / Windsurf / 任意 Agent）：
 
 ```
 开始新小说项目
@@ -63,9 +65,11 @@ bash install.sh
 ```
 
 `install.sh` 做了三件事：
-1. 把 `SKILL.md` 复制到 `~/.claude/skills/agent-novel/`
+1. 把 `SKILL.md` 复制到 Agent skill 目录（默认 `~/.claude/skills/agent-novel/`，可自定义）
 2. 把 `references/`（9个渐进披露文件）复制到 skill 目录
 3. 把 `templates/`（2个Bootstrap模板）复制到 skill 目录
+
+**其他 Agent 用户**：手动将仓库根目录的所有 `.md` 文件 + `references/` + `templates/` 复制到你的 Agent 对应的 skill/rule 目录即可。纯 Markdown，零依赖。
 
 不需要 pip install。不需要 npm install。不需要 Docker。零运行时依赖。
 
@@ -75,7 +79,7 @@ bash install.sh
 
 ### Bootstrap：创建新项目
 
-在 Claude Code 对话中输入：
+在 AI Agent 对话中输入：
 
 ```
 开始新小说项目
