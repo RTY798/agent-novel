@@ -9,7 +9,7 @@
 [![Agent Ready](https://img.shields.io/badge/Any%20Agent-Ready-green)](#)
 
 <p align="center">
-  <img src="assets/海报.png" alt="Agent Novel Skill" width="100%">
+  <img src="poster.png" alt="Agent Novel Skill" width="100%">
 </p>
 
 ```
@@ -216,7 +216,6 @@ agent-novel/
 │   ├── qc-system.md             #   5层质检体系
 │   └── real-pitfalls.md         #   78章踩坑集
 ├── demo/                        # Before/After 示例
-├── assets/                      # 海报与截图
 ├── CONTRIBUTING.md
 └── LICENSE
 ```

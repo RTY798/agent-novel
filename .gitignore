@@ -1,0 +1,5 @@
+# Assets directory — local only, not published
+assets/
+
+# Node
+node_modules/
