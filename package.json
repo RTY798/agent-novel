@@ -1,0 +1,27 @@
+{
+  "name": "agent-novel",
+  "version": "1.0.0",
+  "description": "> Claude Code 小说创作技能。一个文件。零依赖。",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RTY798/agent-novel.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/RTY798/agent-novel/issues"
+  },
+  "homepage": "https://github.com/RTY798/agent-novel#readme",
+  "dependencies": {
+    "jimp": "^1.6.1"
+  }
+}

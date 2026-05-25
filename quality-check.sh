@@ -138,6 +138,98 @@ else
     echo "PASS: 连续4逗号无句号 = 0"
 fi
 
+# ==========================================
+# 8-9. 韵律粗检（非硬性·仅统计输出）
+# ==========================================
+
+# 8. 段落长度标准差（仅统计，不判定PASS/FAIL）
+echo "---"
+PARA_STATS=$(awk '
+  BEGIN { RS="\n\n"; count=0; sum=0; sumsq=0 }
+  {
+    gsub(/^[[:space:]\n]+|[[:space:]\n]+$/, "")
+    if ($0 == "" || $0 ~ /^#/ || $0 == "---") next
+    gsub(/\n/, "", $0)
+    len = length($0)
+    if (len > 0) {
+      count++
+      sum += len
+      sumsq += len * len
+      lens[count] = len
+    }
+  }
+  END {
+    if (count == 0) { print "0 0 0 0 0"; exit }
+    mean = sum / count
+    if (count == 1) { print mean " 0 " lens[1] " " lens[1] " 1"; exit }
+    variance = (sumsq - (sum*sum/count)) / (count - 1)
+    sd = sqrt(variance)
+    # 找最小和最大段落长度
+    min_len = lens[1]; max_len = lens[1]
+    for (i=2; i<=count; i++) {
+      if (lens[i] < min_len) min_len = lens[i]
+      if (lens[i] > max_len) max_len = lens[i]
+    }
+    print mean " " sd " " min_len " " max_len " " count
+  }
+' "$FILE")
+
+MEAN=$(echo "$PARA_STATS" | awk '{printf "%.0f", $1}')
+SD=$(echo "$PARA_STATS" | awk '{printf "%.0f", $2}')
+MIN_PARA=$(echo "$PARA_STATS" | awk '{print $3}')
+MAX_PARA=$(echo "$PARA_STATS" | awk '{print $4}')
+PARA_COUNT=$(echo "$PARA_STATS" | awk '{print $5}')
+
+RHYTHM_NOTE=""
+if [ "$PARA_COUNT" -gt 3 ] && [ "$SD" != "0" ]; then
+  if [ "$SD" -lt 35 ]; then
+    RHYTHM_NOTE=" [节奏-平头] 段落长度过于均匀(标准差=${SD})，可能缺少节奏变化"
+  elif [ "$SD" -gt 90 ]; then
+    RHYTHM_NOTE=" [节奏-剧烈] 段落长度极不均匀(标准差=${SD})，检查是否有意为之"
+  else
+    RHYTHM_NOTE=" 分布自然"
+  fi
+fi
+echo "统计: 段落数=${PARA_COUNT} 均值=${MEAN}字 标准差=${SD} 最短=${MIN_PARA}字 最长=${MAX_PARA}字"
+echo "      ${RHYTHM_NOTE}"
+
+# 9. 连续短句计数（≤8字·连续3句以上为一组，仅统计）
+SHORT_SENTENCE_GROUPS=$(awk '
+  BEGIN { RS="\n\n"; group_count=0 }
+  {
+    gsub(/^[[:space:]\n]+|[[:space:]\n]+$/, "")
+    if ($0 == "" || $0 ~ /^#/ || $0 == "---") next
+    # 按句号、问号、感叹号、破折号分句
+    line = $0
+    gsub(/\n/, "", line)
+    n = split(line, sents, /[。？！——]/)
+    consecutive = 0
+    for (i=1; i<=n; i++) {
+      sub(/^[[:space:]]+/, "", sents[i])
+      if (length(sents[i]) > 0 && length(sents[i]) <= 8) {
+        consecutive++
+      } else {
+        if (consecutive >= 3) group_count++
+        consecutive = 0
+      }
+    }
+    if (consecutive >= 3) group_count++
+  }
+  END { print group_count+0 }
+' "$FILE")
+
+TOTAL_CHARS=$(echo -n "$BODY" | wc -m)
+PER_1000=$(awk -v g="$SHORT_SENTENCE_GROUPS" -v c="$TOTAL_CHARS" 'BEGIN { if (c>0) printf "%.1f", g*1000/c; else print "0" }')
+
+echo "统计: 连续短句组(≤8字×≥3句) = ${SHORT_SENTENCE_GROUPS}组 (${PER_1000}组/千字)"
+if [ "$(echo "$PER_1000 > 5" | bc -l 2>/dev/null || echo 0)" = "1" ]; then
+  echo "      [提示] 短句组偏多，可能碎片化节奏"
+elif [ "$(echo "$PER_1000 < 2 && $TOTAL_CHARS > 2000" | bc -l 2>/dev/null || echo 0)" = "1" ]; then
+  echo "      [提示] 短句组偏少，可能缺少节奏变化"
+else
+  echo "      节奏变化在正常区间"
+fi
+
 # 汇总
 echo "=========================================="
 if [ "$FAILS" -eq 0 ]; then
