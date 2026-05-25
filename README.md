@@ -5,6 +5,10 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Claude Code Skill](https://img.shields.io/badge/Claude%20Code-Skill-blue)](https://claude.com/claude-code)
 
+<p align="center">
+  <img src="assets/海报.png" alt="Agent Novel Skill" width="100%">
+</p>
+
 ```
 6条硬性规则 → 消灭AI腔（不靠审美·靠规则执行）
     │
