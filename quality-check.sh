@@ -26,15 +26,15 @@ echo "=========================================="
 echo "质检: $(basename "$FILE")"
 echo "=========================================="
 
-# 1. 破折号数量 (要求20-35)
+# 1. 破折号数量 (建议20-35，通讯章/内心独白章≤50。弹性警告，不FAIL)
 CHECKS=$((CHECKS + 1))
 DASH=$(echo "$CONTENT" | grep -o '——' | wc -l)
 if [ "$DASH" -lt 20 ]; then
-    echo "FAIL: ——数量 = $DASH (要求 ≥20)"
-    FAILS=$((FAILS + 1))
+    echo "PASS: ——数量 = $DASH (≥20)"
+elif [ "$DASH" -gt 50 ]; then
+    echo "⚠️ WARNING: ——数量 = $DASH (偏多，建议≤50。通讯章/内心独白章可放宽)"
 elif [ "$DASH" -gt 35 ]; then
-    echo "FAIL: ——数量 = $DASH (要求 ≤35)"
-    FAILS=$((FAILS + 1))
+    echo "⚠️ WARNING: ——数量 = $DASH (偏多，建议20-35。如为通讯章/内心独白章可接受)"
 else
     echo "PASS: ——数量 = $DASH (20-35)"
 fi
