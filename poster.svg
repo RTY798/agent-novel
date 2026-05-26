@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 640">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0d1117"/>
+      <stop offset="100%" style="stop-color:#161b22"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#8A2BE2"/>
+      <stop offset="100%" style="stop-color:#FF6D00"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1280" height="640" fill="url(#bg)"/>
+
+  <!-- Grid lines (subtle) -->
+  <g stroke="#1f242f" stroke-width="0.5">
+    <line x1="0" y1="160" x2="1280" y2="160"/>
+    <line x1="0" y1="320" x2="1280" y2="320"/>
+    <line x1="0" y1="480" x2="1280" y2="480"/>
+    <line x1="320" y1="0" x2="320" y2="640"/>
+    <line x1="640" y1="0" x2="640" y2="640"/>
+    <line x1="960" y1="0" x2="960" y2="640"/>
+  </g>
+
+  <!-- Accent bar top -->
+  <rect x="0" y="0" width="1280" height="4" fill="url(#accent)"/>
+
+  <!-- Title -->
+  <text x="80" y="100" font-family="system-ui, -apple-system, sans-serif" font-size="48" font-weight="800" fill="#ffffff">
+    Agent Novel Skill
+  </text>
+  <text x="80" y="145" font-family="system-ui, -apple-system, sans-serif" font-size="24" fill="#8b949e">
+    AI 写作的反套路引擎
+  </text>
+
+  <!-- Nucleus types (core feature) -->
+  <rect x="80" y="190" width="320" height="130" rx="12" fill="#1c2333" stroke="#8A2BE2" stroke-width="1"/>
+  <text x="100" y="225" font-family="system-ui, sans-serif" font-size="20" font-weight="700" fill="#8A2BE2">核-心写作法</text>
+  <text x="100" y="255" font-family="system-ui, sans-serif" font-size="15" fill="#c9d1d9">🔄 变化型 — 角色在这一场改变了</text>
+  <text x="100" y="278" font-family="system-ui, sans-serif" font-size="15" fill="#c9d1d9">❌🔄 失败型 — 想了，没做到</text>
+  <text x="100" y="301" font-family="system-ui, sans-serif" font-size="15" fill="#c9d1d9">⬇️ 深化型 — 还是他，但更______了</text>
+
+  <!-- 7 Knives -->
+  <rect x="480" y="190" width="320" height="130" rx="12" fill="#1c2333" stroke="#FF6D00" stroke-width="1"/>
+  <text x="500" y="225" font-family="system-ui, sans-serif" font-size="20" font-weight="700" fill="#FF6D00">🗡️ 7 把刀</text>
+  <text x="500" y="255" font-family="system-ui, sans-serif" font-size="15" fill="#c9d1d9">通感置换 · 环境反射 · 视角滑轨</text>
+  <text x="500" y="278" font-family="system-ui, sans-serif" font-size="15" fill="#c9d1d9">物的时间线 · 压缩时间</text>
+  <text x="500" y="301" font-family="system-ui, sans-serif" font-size="15" fill="#c9d1d9">意外回应 · 全景收束</text>
+
+  <!-- QC -->
+  <rect x="880" y="190" width="320" height="130" rx="12" fill="#1c2333" stroke="#00C853" stroke-width="1"/>
+  <text x="900" y="225" font-family="system-ui, sans-serif" font-size="20" font-weight="700" fill="#00C853">✅ 7 条硬性质检</text>
+  <text x="900" y="255" font-family="system-ui, sans-serif" font-size="15" fill="#c9d1d9">破折号 20-35 · "不是X是Y" ≤2</text>
+  <text x="900" y="278" font-family="system-ui, sans-serif" font-size="15" fill="#c9d1d9">抽象情绪词 0 · 字数 1500-5000</text>
+  <text x="900" y="301" font-family="system-ui, sans-serif" font-size="15" fill="#c9d1d9">单行段落 ≥5 · 最长 ≤250 · 无4逗号</text>
+
+  <!-- Bottom: Pipeline + Verification -->
+  <rect x="80" y="360" width="720" height="100" rx="12" fill="#1c2333" stroke="#1E88E5" stroke-width="1"/>
+  <text x="100" y="395" font-family="system-ui, sans-serif" font-size="20" font-weight="700" fill="#1E88E5">📦 6 步硬性流水线</text>
+  <text x="100" y="425" font-family="system-ui, sans-serif" font-size="14" fill="#8b949e">准备 → 核型设计 → 写作(1800-5000字) → 质检(7项) → 文件更新(6个追踪文件) → 核验</text>
+  <text x="100" y="448" font-family="system-ui, sans-serif" font-size="14" fill="#8b949e">每步硬性执行，不允许跳过或合并。已在 47 章真实写作中验证。</text>
+
+  <!-- Right side: badges -->
+  <rect x="880" y="360" width="320" height="100" rx="12" fill="#1c2333" stroke="#58A6FF" stroke-width="1"/>
+  <text x="900" y="395" font-family="system-ui, sans-serif" font-size="20" font-weight="700" fill="#58A6FF">⚡ 兼容</text>
+  <text x="900" y="425" font-family="system-ui, sans-serif" font-size="15" fill="#c9d1d9">Claude Code · Cursor · Windsurf</text>
+  <text x="900" y="448" font-family="system-ui, sans-serif" font-size="15" fill="#c9d1d9">任意 AI Agent · 接入即用</text>
+
+  <!-- Footer -->
+  <text x="80" y="540" font-family="system-ui, sans-serif" font-size="16" fill="#8b949e">
+    v10.3 · 47章实战验证 · 开源小说《废墟上的炊烟与少年》 · MIT License
+  </text>
+
+  <!-- Bottom accent bar -->
+  <rect x="0" y="636" width="1280" height="4" fill="url(#accent)"/>
+</svg>
