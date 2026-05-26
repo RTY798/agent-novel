@@ -49,21 +49,22 @@ else
     echo "PASS: 不是/是句式 = $NOT_IS (≤2)"
 fi
 
-# 3. 抽象情绪词 (要求0)
+# 3. 抽象情绪词 (要求0·仅检查叙述，排除对话)
 CHECKS=$((CHECKS + 1))
-EMO=$(echo "$BODY" | grep -o -E '感到|觉得|知道|认为|明白|理解|害怕|难过|愤怒|紧张|伤心|恐惧|焦虑|悲伤|开心' | wc -l)
+# 先去掉对话内容（中文引号内的文本），再检查叙述中的情绪词
+NARRATIVE_BODY=$(echo "$BODY" | sed 's/"[^"]*"//g' | sed 's/「[^」]*」//g')
+EMO=$(echo "$NARRATIVE_BODY" | grep -o -E '感到|觉得|知道|认为|明白|理解|害怕|难过|愤怒|紧张|伤心|恐惧|焦虑|悲伤|开心' | wc -l)
 if [ "$EMO" -gt 0 ]; then
-    echo "FAIL: 抽象情绪词 = $EMO (要求 0)"
-    # 列出哪些词出现了
-    echo "  出现词汇: $(echo "$BODY" | grep -o -E '感到|觉得|知道|认为|明白|理解|害怕|难过|愤怒|紧张|伤心|恐惧|焦虑|悲伤|开心' | sort | uniq -c | sort -rn | head -5)"
+    echo "FAIL: 抽象情绪词(叙述) = $EMO (要求 0)"
+    echo "  出现词汇: $(echo "$NARRATIVE_BODY" | grep -o -E '感到|觉得|知道|认为|明白|理解|害怕|难过|愤怒|紧张|伤心|恐惧|焦虑|悲伤|开心' | sort | uniq -c | sort -rn | head -5)"
     FAILS=$((FAILS + 1))
 else
-    echo "PASS: 抽象情绪词 = 0"
+    echo "PASS: 抽象情绪词(叙述) = 0"
 fi
 
-# 4. 字数 (要求1500-5000，只统计纯正文)
+# 4. 字数 (要求1500-5000，只统计纯正文·用Python计数Unicode字符)
 CHECKS=$((CHECKS + 1))
-CHARS=$(echo -n "$BODY" | wc -m)
+CHARS=$(python3 -c "import sys; print(len(sys.stdin.read().strip()))" <<< "$BODY" 2>/dev/null || echo -n "$BODY" | wc -m)
 if [ "$CHARS" -lt 1500 ]; then
     echo "FAIL: 正文字数 = $CHARS (要求 ≥1500)"
     FAILS=$((FAILS + 1))
@@ -95,14 +96,18 @@ else
     echo "PASS: 一句话段 = $ONE_LINERS (≥5)"
 fi
 
-# 6. 最长段落字符数 (要求≤250字，约等于手机屏10行)
+# 6. 最长段落字符数 (要求≤250字，约等于手机屏10行·用Python计数)
 CHECKS=$((CHECKS + 1))
-MAX_PARA_CHARS=$(awk '
+MAX_PARA_CHARS=$(python3 -c "
+import sys
+text = open(sys.argv[1], 'r', encoding='utf-8').read()
+paras = [p.strip().replace('\n','') for p in text.split('\n\n') if p.strip() and not p.strip().startswith('#') and p.strip() != '---']
+print(max((len(p) for p in paras), default=0))
+" "$FILE" 2>/dev/null || awk '
   BEGIN { RS="\n\n"; max=0 }
   {
     gsub(/^[[:space:]\n]+|[[:space:]\n]+$/, "")
     if ($0 == "" || $0 ~ /^#/ || $0 == "---") next
-    # 合并段落内多行为一行（去掉行内换行）
     gsub(/\n/, "", $0)
     if (length($0) > max) max = length($0)
   }
@@ -228,6 +233,62 @@ elif [ "$(echo "$PER_1000 < 2 && $TOTAL_CHARS > 2000" | bc -l 2>/dev/null || ech
   echo "      [提示] 短句组偏少，可能缺少节奏变化"
 else
   echo "      节奏变化在正常区间"
+fi
+
+# ============================================
+# Check 10: 五感覆盖率统计（非PASS/FAIL，仅统计输出）
+# ============================================
+echo "=== Check 10: 五感覆盖率 ==="
+VISUAL=$(grep -c -E '看到|看见|光|暗|黑|白|红|灰|蓝|绿|黄|橙' "$1")
+AUDIO=$(grep -c -E '听到|声音|响|静|咕嘟|滴答|砰|咔|嗡|沙沙' "$1")
+TOUCH=$(grep -c -E '摸|握|碰|凉|热|冰|软|硬|硌|湿|干|黏' "$1")
+SMELL=$(grep -c -E '闻到|气味|辣味|香味|臭味|汽油|铁锈|松针|烧焦|霉' "$1")
+TASTE=$(grep -c -E '尝|吃|喝|甜|辣|咸|酸|苦|涩|话梅|草莓|茶' "$1")
+
+SENSES_USED=0
+[ "$VISUAL" -gt 0 ] && ((SENSES_USED++))
+[ "$AUDIO" -gt 0 ] && ((SENSES_USED++))
+[ "$TOUCH" -gt 0 ] && ((SENSES_USED++))
+[ "$SMELL" -gt 0 ] && ((SENSES_USED++))
+[ "$TASTE" -gt 0 ] && ((SENSES_USED++))
+
+echo "  视觉关键词: $VISUAL 次"
+echo "  听觉关键词: $AUDIO 次"
+echo "  触觉关键词: $TOUCH 次"
+echo "  嗅觉关键词: $SMELL 次"
+echo "  味觉关键词: $TASTE 次"
+echo "  覆盖感官: $SENSES_USED/5"
+
+if [ "$SENSES_USED" -lt 3 ]; then
+    echo "  ⚠️ 警告：五感覆盖不足(<3种)。建议在情感爆点处增加非视觉感官描写。"
+    echo "  参考：references/golden-finger-techniques.md → 手法1：五感沉浸"
+fi
+
+# 角色专属动作检测（非PASS/FAIL，仅统计提醒）
+CHARACTER_GESTURES=$(grep -c -E '咬笔|打火机|菜单本|耳机|钢管|虎牙|狗牌|蓝布条|碎镜子|弯管|撬棍|琴颈|对讲机.*攥|手指.*敲' "$1")
+echo "  角色专属动作/物品关键词: $CHARACTER_GESTURES 次"
+if [ "$CHARACTER_GESTURES" -eq 0 ]; then
+    echo "  ⚠️ 未检测到角色专属动作关键词。建议检查情感爆点处是否使用了通用动作('握拳''咬牙')替代角色专属微动作。"
+fi
+
+# ============================================
+# Check 11: 连续对话段落预警
+# ============================================
+echo "=== Check 11: 连续对话预警 ==="
+# 检测连续4行以上纯对话：用awk统计连续以中文引号/对话标点开头的行
+CONSECUTIVE_COUNT=$(grep -n -E '^("[^"]*"|"[^"]*|——|[^"]*")$|^".*"$' "$1" | awk -F: '{
+    if(prev_line && $1==prev_line+1) {
+        consecutive++
+    } else {
+        if(consecutive>=4) print "连续"consecutive"行对话(起始行"start_line")"
+        consecutive=1; start_line=$1
+    }
+    prev_line=$1
+} END { if(consecutive>=4) print "连续"consecutive"行对话(起始行"start_line")" }')
+if [ -n "$CONSECUTIVE_COUNT" ]; then
+    echo "  ⚠️ 检测到连续对话段落，需人工确认："
+    echo "$CONSECUTIVE_COUNT"
+    echo "  检查项：是否有角色连续说话>3句？是否需要插入动作/环境/内心戏打破纯对话节奏？"
 fi
 
 # 汇总
