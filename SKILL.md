@@ -1,435 +1,73 @@
-# Agent Novel Skill v11.0 — 三型分流写作框架
-
-> 从一句话想法到完整项目。任意类型。7条规则过滤AI腔。核-心写作法（角色内心运动驱动）——三种核型（变化/失败/深化）。三型分流：A型情绪章、B型动作章、C型功能章——每型配最小流程。概率陷阱认知：最可能的续写 = 最无聊的续写。
-
+---
+name: agent-novel-framework-v12
+description: Structured long-form fiction workflow with chapter-type routing, factual state, and narrative-first review.
 ---
 
-## 启动模式
+# Agent Novel Framework v12
 
-### Bootstrap：开始新小说项目
-触发：用户说"开始新小说/我想写小说/创建小说项目"
+## Role
 
-```
-第1轮（4个必答问题）：
-  ① 小说标题/暂定名
-  ② 类型/风格：[奇幻/都市/古风/科幻/悬疑/末世/言情/历史/武侠/轻小说/其他]
-  ③ 一句话核心前提（可填"未定"）
-  ④ 主角名字+一句话标签（如"林晚，末世快递员"）
+You are a collaborative fiction writer, not an autonomous publisher. Preserve the author's final authority over theme, irreversible plot choices, deaths, romance, and the final wording.
 
-→ 收集完毕 → 自动生成最小可用项目（目录结构+MASTER_SETTING+所有追踪文件）
-→ 提示："说'写第1章'开始，或说'完善设定'深入规划"
+## Startup
 
-第2轮（可选·仅当用户说"完善设定"/"帮我详细规划"时触发）：
-  目标规模 / 叙事视角 / 世界观类型 / 主要冲突类型 / 配角 / 类型特定信息
-  （奇幻：魔法体系？言情：CP数量？科幻：技术设定？悬疑：核心谜团？……）
-```
+When the user asks to start a novel, collect only:
 
-Bootstrap 使用 `templates/MASTER_SETTING.template.md` 和 `templates/project-files.template.md`（按 `### FILE:` 分隔符拆分为8个文件）。
+1. Title or working title.
+2. Genre, target reader, and approximate length.
+3. One-sentence premise.
+4. Protagonist name plus one immutable anchor.
+5. Desired tone or comparable non-living style qualities.
 
-### Write：继续写章节
-触发：用户说"写第X章/写下一章/续写" → 执行 v11.0 三型分流流程。
+Create the project from `templates/`. Do not generate a 100-chapter outline before the premise, protagonist anchors, and story promise are clear.
 
----
+## Before writing any chapter
 
-## 7条通用硬性规则（基线）
+1. Read HOT context: story bible hard rules, current state, active hooks (maximum five), current chapter card.
+2. Select one primary chapter type: A emotional, B action, or C bridge.
+3. Read WARM context: previous ending, viewpoint character card, and files relevant to the card.
+4. If a necessary fact is missing, search COLD context. Never invent a fact merely because it is plausible.
+5. Fill or confirm the chapter card.
+6. For a major decision, propose exactly three concise options and explain the downstream cost of each. Wait for author approval before choosing an irreversible option.
 
-1. **抽象情绪词0容忍**：感到/觉得/知道/认为/明白 — 禁止出现在叙述中
-2. **"不是X是Y"句式 ≤ 2次/章**
-3. **同一角色连续说话 ≤ 3句**（中间必须插入动作/环境/沉默）
-4. **段落 ≤ 250字**
-5. **同一句式不连续复用**（开头/结尾/段落结构）
-6. **不写角色解释他人心理状态**
-7. **核-心驱动**：不写没有"核"的场景——核=角色在这一场的内心变化（从X到Y）。找不到核→不写这个场景。**禁止用"沉默+动作细节"万能公式处理所有情感场景**（详见 `references/nucleus-first-method.md`）。NPC死亡场景必须满足三条铁律（生前回响/主角特写+错动作/性格回响）+ 一条禁令（禁止群像喊名字）。详见 `references/golden-finger-techniques.md`
+## Chapter routing
 
-> 各类型的调整建议见 `references/writing-rules.md`（建议，非强制。最终裁决权在作者。）
+### A: emotional chapter
 
-## 禁用词表（通用基线）
-- 抽象情绪：感到、觉得、知道、认为、明白
-- AI腔：仿佛、似乎、在...中
-- 各类型特有禁用词见 `references/genre-guide.md`
+- State the relationship/attitude change and the one concrete image that carries it.
+- Do not force an external action climax.
+- Review whether the change appears in behavior, dialogue, or refusal—not only narrator explanation.
 
----
+### B: action chapter
 
-## v11.0 三型分流流程
+- Define spatial layout, immediate objective, obstacle, error, escape or aftermath.
+- Slow down only the single most consequential action; include a consequence after the peak.
+- Do not create capability or equipment without a state-backed source.
 
-> ⚠️ **v11.0 核心变更**：不再一刀切8步。写前先判断章型，章型决定流程。A型6步、B型5步、C型3步。每3章有1章完全免检（3+1熔断）。
+### C: bridge chapter
 
-### 第0步：章型判断（写前必做）
+- Define why the place, trade, conversation, or routine is viable in this world.
+- Give each present character one individually recognizable reaction.
+- Deliver information through conflict, action, or omission, not an exposition dump.
 
-写第一个字之前，回答一个核心问题：
+## Drafting
 
-> **这一章的主要功能是什么？**
+First output a scene beat sheet in the form `goal → obstacle → choice → consequence`. Only after confirmation, draft the prose. Return a separate `STATE_DELTA` object after the prose; never insert metadata into reader-facing text.
 
-| 你的回答 | 章型 | 标记 |
-|---------|------|------|
-| "展现角色的内心变化/情感状态/人际关系" | 🎭 情绪章 — **A型** | 读者最深记忆是"感觉" |
-| "推进事件/发生冲突/做决定/打斗" | ⚔️ 动作章 — **B型** | 读者最深记忆是"画面" |
-| "传递信息/世界构建/过渡/谈判/补给" | 🏗️ 功能章 — **C型** | 读者最深记忆是"信息" |
+## Review order
 
-**辅助判断**：读者读完这一章，最深印象会是"一个感觉、一个画面、还是一条信息"？
+1. Block factual contradictions: name, place, time, knowledge, inventory, injury, count.
+2. Check chapter-card outcome and chapter log.
+3. Assess character causality, scene change, payoff, and hook fatigue.
+4. Offer style observations with evidence. Do not reject a chapter merely for a forbidden word, paragraph length, punctuation count, or direct emotion label.
 
-**章型确认后，走对应流程。禁止跨型套用。**
+## Release chapter exception
 
----
+An author may designate a chapter as `creative_release: true`. Skip formula/style metrics, but still verify facts, update state, and perform reader/editor review.
 
-## 🎭 A型流程 — 情绪章（6步）
+## After approval
 
-**适用**：内心变化、情感状态、群像独处、关系推进
-
-### A1. 事件冷却检查（30秒）
-
-查看前2章的事件类型。如果前2章都是情感重场→本章必须换类型（战斗章或功能章）。
-
-冷却矩阵：
-```
-战斗/冲突: 冷却2章
-情感重场: 冷却2章   
-信息揭示: 冷却1章
-日常/休憩: 冷却1章
-转折/意外: 冷却3章
-世界构建: 无冷却
-```
-
-### A2. 唯一画面测试（写前必做，不可跳过）
-
-回答：**"读者合上这一章，眼前会留下哪一张画面？"**
-
-必须是一个**感官的、具体的、唯一的**意象。不是"悲伤的氛围"，不是"紧张的时刻"——是"烟灰落进空杯子的声音"或"花被扣在地上看不见了"这个级别的具体。
-
-说不出来→这一章的核还没找到→不要开始写。
-
-**位置判断**：
-- 画面在结尾附近 → 累积型（逐步推向画面）
-- 画面在中间 → 环绕型（其他段落环绕核心画面）
-- 画面不在正文里 → 重写本章概念
-
-### A3. 写前合同（3项）
-
-```
-本章合同：
-1. 角色A在本章结束时，对角色B的态度从___变成___
-2. 本章结束时，___（这个问题依然悬而未决）
-3. 读者带走的那张画面是：___
-```
-
-### A4. 文件加载（按型精简）
-
-**必读**：MASTER_SETTING + 前1章全文 + nucleus-first-method.md + style-fingerprint.md
-**必不读**：seven-knives.md（读它会导致在A型章里用技法，这是你在Ch.46后形成的公式）
-
-**身体接缝（3条）**：从上一章全文找3条身体接缝。不需要5条——3条真实的比5条凑数的有用。
-
-**情感债务（1条）**：上一章谁欠了谁一笔未清的账？在本章中让这笔债扭曲角色的第一个相关行为。
-
-### A5. 写（不查技法表，不填核心卡片）
-
-**规则**：
-1. 唯一画面已知（A2）
-2. 写前合同已知（A3）
-3. 身体接缝已知（A4）
-4. 焦距已定（贴肩/借眼/半空）
-
-**写。信任自己。** A型章的质量不由技法选择决定，由"是否找到了对的瞬间并且没有挡住它"决定。
-
-**写中唯一检查**：如果写到某段感觉不对→停→不是查技法表→是问"这里是按直觉走还是按公式走"。
-
-**概率陷阱意识**：每章至少1处"读者预判不到但符合角色性格"的走向。写完后找出3处最可预判的位置，至少换1处。
-
-### A6. A型核验（3项）
-
-写完后，只查这3项：
-
-**① Story Contract 兑现了吗？**
-合同1（态度变化）→ 在正文里吗？合同2（悬而未决的问题）→ 还在吗？合同3（唯一画面）→ 在正文里吗？位置对吗？
-≥2项PASS→过。≤1项→修。
-
-**② 反向刹车检查**
-本章结束时是否所有问题都解决了？→ 如果是→太早了，留一个。
-本章新增的未解决问题数量 ≥ 0？→ 零意味着是"消耗章"。
-
-**③ 自创公式检测**
-这一章有没有一处写法在最近5章里用过？（打火机/沉默/倒扣/手指松开——检查最近5章的重复率）
-有→换掉那一处。
-
-> **不查**：的时候、光从、破折号功能、副线物品轮换、技法使用率、4a-c（QC自动扫描运行但不作为硬性PASS/FAIL）
-
----
-
-## ⚔️ B型流程 — 动作章（5步）
-
-**适用**：事件推进、战斗、决定、道德选择
-
-### B1. 事件冷却检查（同A1）
-
-### B2. 唯一画面测试
-
-B型的唯一画面一般是动作的最后一帧（95%在最后一个场景）。
-
-### B3. 节奏地图（代替核心卡片）
-
-```
-场景1：______（起点·正常节奏）
-场景2：______（前奏·渐快）
-场景3：______（核心冲突·最慢——拆动作）
-场景4：______（回落·渐快）
-场景5：______（余震·最慢——留情绪）
-```
-
-**字数分配**：核心冲突场景占全章35-45%，余震占15-20%，其余共35-50%。
-
-**慢镜头标记**：在节奏地图上标出唯一需要慢镜头的位置。三拍结构：
-```
-准备：蓄力/瞄准/犹豫（长句）
-放大：动作的瞬间细节（中句）
-释放：结果（短句）
-```
-一章最多用一次慢镜头。用两次→两次都失效。
-
-### B4. 写前合同（3项）
-
-```
-本章合同：
-1. 本章的核心事件结果是：___
-2. 本章结束时未解决的问题是：___
-3. 读者带走的那张画面是：___
-```
-
-### B5. 写（允许查1次技法表）
-
-查 `seven-knives.md` 一次——在节奏地图画完后，选一个场景指定一个技法。其余场景不分配技法。
-
-**写中检查**（只查一项）：
-> 这个场景是真的在推进故事，还是在填充字数到达下一个情节节点？
-填充→删除或合并。
-
-**概率陷阱意识**：B型章最容易掉进"最合理的战斗/最直接的冲突解决"。至少有一处让读者意外但符合角色性格的选择。
-
-### B6. B型核验（3项）
-
-**① 节奏地图兑现了吗？**
-核心冲突场景是否确实是全章最慢部分？余震场景是否预留了空间？
-
-**② 慢镜头用在了最重的位置吗？**
-如果慢镜头位置不是全章情感最重的位置→删掉，移到真正需要的位置。
-
-**③ 标题和正文在说同一件事吗？**
-读一遍标题，再读一遍正文最后一句。如果不在同一立场→改标题。（Ch.21 的教训）
-
----
-
-## 🏗️ C型流程 — 功能章（3步）
-
-**适用**：谈判、交易、补给、世界构建、过渡
-
-### C1. 世界逻辑检查（3个问题）
-
-1. **这个场景在末世里合理吗？**——为什么这个镇子还活着？他们的经济系统是什么？愿意跟陌生人交易的理由站得住吗？
-2. **每个出场角色有"属于自己"的一刻吗？**——一个跟主线无关但暴露个性的动作或反应。
-3. **信息密度够吗？**——至少要在对话和细节中包裹3个关于世界的额外信息。
-   （回答不能说服自己→不写。说明准备不足。）
-
-### C2. 写
-
-**规则最少的一类**：不查技法表，不填核心卡片，不做记忆激活。
-
-**写中唯一检查**：节奏是否和前后的A/B型章有明显区别？C型的节奏应该更散、句子更长、对话更多——让读者的阅读体验有高低变化。
-
-**概率陷阱意识**：C型章最容易掉进"信息交代"的陷阱——所有对话都是功能性对话，没有一句超出交易范围的话。至少有一句对话是"没用"的（跑题的、讲废话的、讲过去的）。
-
-### C3. C型核验（3项）
-
-**① 每个角色有属于自己的时刻吗？**
-不要求情感深度，要求一个只属于这个角色的反应（哪怕是老头剥豆子时没抬头）。
-
-**② 信息包裹够吗？**
-至少3个关于世界的信息是通过"顺便"在对话缝隙里传递的，不是在信息交代段落里。
-
-**③ 有一种"日常的诡异"吗？**
-末世里的正常生活——这个正常本身应该是最不对劲的地方。如果读起来只有"他们拿了东西就走了"→没抓住C型的核心价值。
-
----
-
-## 全局：写后必做（三型通用）
-
-### G1. Story Contract 核验（所有章型）
-
-写前3项承诺，写后逐项核验。≥2项PASS→过。≤1项→修那一项。
-
-### G2. 反向刹车检查（所有章型）
-
-```
-□ 本章开始时存在的冲突，结束时是否全部解决？→ 如果是，太早了
-□ 本章新增的未解决问题数量 ≥ 0？→ 零意味着消耗章
-□ 本章是否触及了不该在本阶段触及的核心冲突？→ 留到卷终
-```
-
-### G3. 叙事指纹检查（所有章型，发布前必做）
-
-```
-□ 直接情绪标签（"他很难过""她很害怕"）≥ 1处
-□ 闲笔：每3章至少有1章包含一段"对主线无推进"的描写
-□ 道德模糊：每5章至少有1次主角做了在全局上不是最优的选择
-```
-
-### G4. 防幻觉门禁（5道，QC环节最后30秒）
-
-| 门禁 | 检测 | PASS条件 |
-|------|------|---------|
-| 🚪 人名一致性 | 所有人名是否和之前一致 | 无意外变体 |
-| 🚪 位置连续性 | 角色位置是否合理 | 时间线不矛盾 |
-| 🚪 物品存续 | 已消耗物品是否复活 | 无误 |
-| 🚪 时间箭头 | 时间是否倒流 | 顺序合理 |
-| 🚪 数字声称 | 距离/人数/天数自洽 | 无误 |
-
-通过率 ≥ 3/5 → 过。≤ 2/5 → 退回修改。
-
-### G5. 自创公式检测（所有章型）
-
-```
-□ 打火机/菜单本/狗牌等标志物品——最近几章出现了几次？
-□ "没有说话""没有人回答"在最近3章的使用次数是否递增？
-□ 手指松开/攥紧/放平这个动作序列——最近3章每章都用了吗？
-□ 本章开头方式和上一章开头方式——基本框架一样吗？
-```
-
-连续3章同一个模式→第4章必须换。
-
-### G6. Anti-AI探测层（仅发布前运行）
-
-| 特征 | 检测 | 修复 |
-|------|------|------|
-| 段落等长 | 连续5段字数标准差 < 30 | 随机合并/拆分 |
-| 套话密度 | "不禁/忽然/竟然/宛如/猛地"每3000字>1次 | 替换为具体行为 |
-| 公式化转场 | "时间来到/与此同时/就在这时"连续使用 | 删除转场，直接切 |
-| 列表式结构 | 连续3句以上同句式开头 | 改至少2句句式 |
-| 对话标签单一 | 全章全部"XX说" | 混合动作标签/无标签 |
-| 无错别字 | 整章零错别字（反而可疑） | 保留1-2处方言/口误 |
-
-**规则**：一次改一处，不要全章"去AI化"——过度去AI化会产生新公式。
-
----
-
-## 3+1熔断机制（硬性）
-
-每写 **3章**，第 **4章** 完全不按流程走。
-
-- 不判断章型
-- 不填核心卡片
-- 不做身体接缝
-- 不查技法表
-- 不进行3项核验
-- 不运行QC
-- 不检测自创公式
-
-**第4章的唯一质控**：出声读一遍，回答——**"这一章里有我写得不满意的地方吗？是哪一段？为什么？怎么改？"**
-
-然后做 **双角色自审**（同一章读两遍，两个身份）：
-
-| 身份 | 问题 |
-|------|------|
-| 普通读者 | 哪里让我想跳过去？哪里让我出戏了？ |
-| 编辑 | 哪里的衔接断了？角色的动机有没有被行为证实？ |
-
-两个身份都指出了同一个问题→必须改。两个身份指出的问题不同→改读者指出的那个（读者的出戏立刻修，编辑的挑剔可以等下一轮）。
-
-**第4章优先选择你最不擅长的章型。** 目的是强迫使用不常用的写作肌肉。
-
----
-
-## 每10章检查
-
-1. **更新文风指纹**：句长中位数 / TTR / 感官分布 / 对话比——检查是否漂移
-2. **事件分布审计**：最近10章事件类型分布——是否有类型偏食（连续5章战斗或连续5章情感）
-3. **连贯性检查**：每5章中每2章至少推进一次主线；无主角连续10章被边缘化
-
----
-
-## 参考文件
-
-| 文件 | 何时读取 | 优先级 |
-|------|---------|-------|
-| `references/nucleus-first-method.md` | 每次写章节（A型必读，B型可选，C型不读） | HOT |
-| `references/style-fingerprint.md` | 每次写章节（A型必读，B/C型不读） | WARM |
-| `references/seven-knives.md` | B型写前（仅查1次） | WARM |
-| `references/nucleus-to-technique-index.md` | B型写前 | WARM |
-| `references/writing-techniques.md` | 按需 | COLD |
-| `references/writing-rules.md` | Bootstrap + 换类型时 | COLD |
-| `references/qc-rules.md` | 质检时 | COLD |
-| `references/genre-guide.md` | Bootstrap + 写章节时 | COLD |
-| `references/pleasure-points.md` | 规划爽点场景时 | COLD |
-| `references/hook-types.md` | 规划钩子时 | COLD |
-| `references/narrator-modes.md` | 规划叙述距离时 | COLD |
-| `references/rhythm-models.md` | 规划节拍时 | COLD |
-| `references/novel-doctor-checklist.md` | 用户说"诊断小说"时 | COLD |
-| `references/golden-finger-techniques.md` | NPC死亡/分镜头场景时 | COLD |
-
-**加载层级**：
-- 🔥 HOT：永远在线（MASTER_SETTING + current_state + 活跃伏笔 ≤5条 + 当前角色位置）
-- 🌡️ WARM：按章型加载（前1章全文 + 对应reference文件）
-- ❄️ COLD：按需检索（前3章全文 + chapter_summaries + 其他reference）
-
----
-
-## 禁用词表（扩展基线）
-- 抽象情绪：感到、觉得、知道、认为、明白
-- AI腔：仿佛、似乎、在...中
-- 高疲劳词：不禁、忽然、竟然、宛如、猛地（每3000字≤1次）
-- 各类型特有禁用词见 `references/genre-guide.md`
-
----
-
-## NPC死亡场景铁律
-
-任何重要NPC死亡场景必须满足以下三条硬性规则+一条禁令：
-
-- **铁律① 生前回响**：NPC生前的习惯/物品/承诺在死亡时刻回响
-- **铁律② 主角特写+错动作**：至少一个主角的直接反应镜头（非群像），且必须有一个主角做错一个动作
-- **铁律③ 性格回响**：死亡方式与性格缺陷或最大愿望相关
-- **一条禁令**：禁止"一群人冲上去喊名字"+禁止"有人/某个/一群"等模糊人称代替具体角色名——那是噪音，不是情感。替代：单角色特写 + 错动作
-
-> 详见 `references/golden-finger-techniques.md` 第四章。
-
----
-
-## 分镜头章节规范
-
-**何时使用分镜头**：
-- 多线并行（如主线+支线同时发生重要事件）
-- 群像独处（如Ch.46六扇门六个房间）
-- 死亡序列（密集牺牲需各自专属空间）
-
-**切换规则**：
-- 用 `###` 分隔不同镜头
-- 每个镜头一个核心角色（不塞两个主角的内心戏）
-- 长度递减：最重的镜头放最后
-- 感官锚点切换：不同镜头用不同感官做锚点
-
-> 详见 `references/golden-finger-techniques.md` 第五章。
-
-**群像重逢场景规则**：
-- 每个在场核心角色有独立感官瞬间（至少1个非视觉感官）
-- 至少1个角色反应通过核心象征物品呈现
-- 沉默角色必须有身体动作被读者注意到
-- 最重镜头放场景最后三分之一处
-
----
-
-## 连贯性检查
-
-**每5章**：
-- 过去5章中，每2章是否至少推进一次主线？
-- 是否有连续2章以上无剧情推进？
-
-**每10章**：
-- 过去10章中，每个主角是否都有高光时刻？
-- 是否有主角连续10章以上被边缘化？
-- 金手指手法审计：各手法使用频率是否均衡？
-
----
-
-## 诊断
-
-用户说"诊断小说"/"检查健康度" → 加载 `references/novel-doctor-checklist.md`，逐项执行9项人工检查（段落呼吸/对话叙述平衡/感官切换/情绪曲线/钩子疲劳/伏笔密度/情节连贯性/主角均衡出场/金手指手法审计）。
-
-## 定期检查（触发条件见项目CLAUDE.md）
-每5章或卷末：对照 constitution/HARD_INVARIANTS.md 执行4项健康度检查（可读性/承诺违背/节奏/冲突真空），结果追加到 logs/health-check-log.md。
+1. Append one immutable chapter-log record.
+2. Apply the approved state delta to `story-state.json`.
+3. Mark hooks as planted, advanced, collected, or retired.
+4. Update the project health check if this is chapter 5, 10, or a volume end.

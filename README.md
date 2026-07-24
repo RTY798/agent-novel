@@ -1,235 +1,59 @@
-# Agent Novel Skill v11.0 — 三型分流写作框架
+# Agent Novel Framework v12
 
-> 通用 AI Agent 小说创作技能。一个想法 → 自动生成全项目 → 写到完结。
-> 三型分流：A型情绪章 · B型动作章 · C型功能章——每型配最小流程。
-> 概率陷阱认知：最可能的续写 = 最无聊的续写。打破 AI 的统计中心倾向。
+[中文说明](README_ZH.md) · [技能入口](SKILL.md) · [示例](examples/)
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Claude Code](https://img.shields.io/badge/Claude%20Code-Skill-blue)](https://claude.ai/claude-code)
-[![Cursor](https://img.shields.io/badge/Cursor-Compatible-purple)](https://cursor.sh)
-[![Windsurf](https://img.shields.io/badge/Windsurf-Compatible-teal)](https://codeium.com/windsurf)
-[![Agent Ready](https://img.shields.io/badge/Any%20Agent-Ready-green)](#)
+An AI-assisted long-form fiction framework that keeps the author in control of story decisions while making continuity, planning, and review reproducible.
 
-<p align="center">
-  <img src="poster.png" alt="Agent Novel Skill" width="100%">
-</p>
+## What it solves
 
-```
-一句话想法 → Bootstrap 4问 → 自动生成全项目 → 写下一章
-    │
-章型判断 → A型(情绪) / B型(动作) / C型(功能) → 按型走最小流程
-    │
-事件冷却矩阵 → 6种事件类型 × 冷却期 → 防类型偏食
-    │
-唯一画面测试 → 写前回答：读者合上眼会看到哪张画面？
-    │
-Story Contract → 写前3项承诺 → 写后逐项核验
-    │
-反向刹车 → 非终局章禁止解决核心冲突 → 每章新增≥1个未解问题
-    │
-叙事指纹防护 → 情绪标签 + 闲笔 + 道德模糊性 → 防AI叙事指纹
-    │
-自创公式检测 → 打火机/沉默/倒扣/手指松开 → 防套路化
-    │
-Anti-AI探测层 → 段落等长/套话密度/公式化转场 → 发布前检测
-    │
-3+1熔断 → 每3章1章完全免检 → 双角色自审(读者+编辑)
-```
+- Writing every chapter from a stable, minimal context packet instead of dumping the whole novel into a prompt.
+- Treating story facts as structured data, so locations, inventory, injuries, and knowledge do not drift.
+- Separating narrative quality from superficial anti-AI rules.
+- Varying chapter workflow by primary function: emotional, action, or bridge.
 
-**110+ 章连载实战踩坑 → v11.0 三型分流升级。** 支持任意类型：奇幻/都市/古风/科幻/悬疑/末世/言情/历史/武侠/轻小说。
-
----
-
-## 30秒体验
-
-在你的 AI Agent 中输入：
-
-```
-开始新小说项目
-标题：《星落镇》  类型：悬疑  主角：苏夜，失忆的入殓师
-```
-
-然后说：
-
-```
-写第1章
-```
-
-Skill 自动加载 → 判断章型 → 按型走流程 → 写后核验。三行命令，从零到第一章。
-
-> 想先深入规划？说 **"完善设定"** 进入第2轮。
-
----
-
-## Before / After
-
-| Before | After |
-|-----------|----------|
-| 他感到一阵深深的恐惧从心底升起，他觉得自己可能永远也走不出这座死城了。仿佛整个世界都在崩塌。 | 林哲的后背贴着墙。水泥是凉的。他从墙角探出半个头——暗处有东西在动。 |
-| 她知道他在害怕，但她同时也知道他是对的。这不是软弱的表现，而是一个人在面对巨大危险时最真实的反应。 | 苏瑶的手按在腰间的撬棍上。金属贴着她掌心的茧——硬的——锈的触感。她的呼吸从鼻子里出来——两次——然后停了。 |
-
-> 完整 Before/After 对比见 [`demo/`](demo/)
-
----
-
-## v11.0 核心升级
-
-- **三型分流**：不再一刀切8步。A型情绪(6步)/B型动作(5步)/C型功能(3步)——每型配最小流程，禁止跨型套用
-- **事件冷却矩阵**：6种事件类型×冷却期，防止连续同类型写作疲劳
-- **唯一画面测试 → 第0步**：写前回答"读者合上眼会看到什么？"，说不出来不写
-- **Story Contract**：写前3项承诺，写后逐项核验
-- **反向刹车机制**：非终局章禁止解决核心冲突，每章新增≥1个未解决问题
-- **概率陷阱认知层**：基于 NarrativeLoom (CHI 2026) 研究——AI的"最可能续写=最无聊续写"。每章至少1处读者预判不到的走向
-- **叙事指纹防护**：基于 StoryScope (UMD+DeepMind 2026) 研究——93.2%靠叙事结构区分AI与人类。强制补情绪标签+闲笔+道德模糊性
-- **自创公式检测**：不仅防AI腔，还防自己创造的公式（打火机/沉默/倒扣/手指松开）
-- **Anti-AI探测层**：段落等长/套话密度/公式化转场/无错别字——发布前检测
-- **3+1熔断**：每3章有1章完全免检，双角色自审（读者+编辑）
-- **HOT/WARM/COLD三层加载**：按章型只加载需要的文件，不浪费token
-- **5道防幻觉门禁**：人名/位置/物品/时间/数字一致性
-- **平台反AI探测**：专为番茄小说等平台的AI检测设计
-
-## v10.0 保留功能
-
-- **金手指写作手法体系**：5种手法（五感沉浸/内心对比/细节象征/对话潜台词/侧面烘托）
-- **NPC死亡场景铁律**：三条硬性规则+一条禁令
-- **分镜头章节规范**：多线并行/群像独处/死亡序列规则
-- **连贯性质检**：每5章主线推进 + 每10章主角均衡出场
-- **写作技法库**：7大板块（感官/对话/节奏/叙述距离/场景结构/情感传达/描写）
-- **L1冻结摘要**：每章300-500字，写定冻存，永不回改
-
----
-
-## 这 110+ 章中踩过的坑
-
-| 坑 | 表现 | v11.0 如何防 |
-|----|------|-------------|
-| **打火机综合症** | 同一情感锚点连续使用 | 自创公式检测——打火机/沉默/倒扣/手指松开轮换追踪 |
-| **标题落后正文** | 标题"不犹豫"正文说"不犹豫但也不麻醉" | B型核验第3项：标题和正文最后一句立场一致吗 |
-| **交易太容易** | 谈判章所有障碍被几句话化解 | C型世界逻辑检查：末世里合理吗？ |
-| **全章同一节奏** | 情绪章/动作章/功能章用同一种段落节奏 | 三型分流确保不同章型有不同的节奏要求 |
-| **沉默万能公式** | "他没有说话"每章用5-8次 | 自创公式检测+概率陷阱意识 |
-| **叙事指纹AI化** | 79%无支线/77%直接点明主题 | 叙事指纹检查强制闲笔+道德模糊+情绪标签 |
-| **元叙事污染** | 角色说"这是第12章给你的" | QC 4d 扫描 |
-| **数字不自洽** | "四个字"实际是五个字 | 5道防幻觉门禁 |
-| **物理穿帮** | 5座车塞了8个人 | current_state.md+门禁检查 |
-| **伏笔蒸发** | 40章后忘了20章的约定 | L1冻结摘要 |
-
----
-
-## 安装
+## Quick start
 
 ```bash
-git clone https://github.com/RTY798/agent-novel.git
-cd agent-novel
-bash install.sh
+npm install
+npm run init -- "My Novel"
+# Fill in projects/My Novel/project/story-bible.md and state/story-state.json.
+# Create a chapter card, then ask your writing agent: “Write Chapter 1 using this card.”
+npm run check:state -- projects/My Novel/state/story-state.json
 ```
 
-零运行时依赖。不需要 pip install / npm install / Docker。
+## Core principles
 
----
+1. **Facts are data; prose is art.** State validation is strict. Sentence-level style is advisory.
+2. **A chapter owes the reader a change.** It need not create a new mystery; resolution, recovery, or emotional payment can be the change.
+3. **Use workflows as scaffolding, not shackles.** An intentionally unconventional chapter may skip style checks, never factual checks.
+4. **The author owns irreversible choices.** AI proposes options and drafts; the author decides deaths, relationships, themes, and publication.
 
-## 快速使用
+## Repository layout
 
-### Bootstrap：创建新项目
-
-```
-开始新小说项目
-```
-→ 4问 → 自动生成完整项目文件 → "写第1章" 开始写作
-
-### Write：续写章节
-
-```
-写第X章
-```
-→ v11.0 三型分流自动执行
-
-### 诊断
-
-```
-诊断小说
-```
-→ 加载 9 项人工检查清单
-
----
-
-## 7 条硬性规则
-
-1. **抽象情绪词 0 容忍**：感到/觉得/知道/认为/明白 禁止出现在叙述中
-2. **"不是X是Y"句式 ≤ 2 次/章**
-3. **同一角色连续说话 ≤ 3 句**
-4. **段落 ≤ 250 字**
-5. **同一句式不连续复用**
-6. **不写角色解释他人心理状态**
-7. **核-心驱动**：不写没有"核"的场景。核=角色内心运动（从X到Y）
-
----
-
-## 禁用词表
-
-- 抽象情绪：感到、觉得、知道、认为、明白
-- AI腔：仿佛、似乎、在...中
-- 高疲劳词：不禁、忽然、竟然、宛如、猛地（每3000字≤1次）
-
----
-
-## 项目结构
-
-```
-agent-novel/
-├── SKILL.md                    # 主技能文件（v11.0）
-├── references/
-│   ├── v11-upgrade.md          # 完整设计方案（含外部精华映射）
-│   ├── nucleus-first-method.md # 核-心写作法
-│   ├── seven-knives.md         # 7把刀技法
-│   ├── nucleus-to-technique-index.md # 技法速查
-│   ├── writing-techniques.md   # 写作技法库
-│   ├── golden-finger-techniques.md   # 金手指手法
-│   ├── style-fingerprint.md    # 文风指纹（需生成）
-│   ├── qc-rules.md             # 质检说明
-│   ├── genre-guide.md          # 各类型指南
-│   ├── hook-types.md           # 钩子类型
-│   ├── narrator-modes.md       # 叙述距离
-│   ├── pleasure-points.md      # 爽点梯级
-│   ├── rhythm-models.md        # 节奏模型
-│   ├── novel-doctor-checklist.md # 诊断清单
-│   └── writing-rules.md        # 规则调整建议
+```text
+agent-novel-framework-v12/
+├── SKILL.md                         # Instructions for an AI writing agent
+├── README_ZH.md                     # Complete Chinese guide
+├── package.json                     # Zero-dependency Node.js commands
+├── scripts/
+│   ├── init-project.mjs             # Creates a novel project from templates
+│   ├── validate-state.mjs           # Validates factual state
+│   └── preflight-chapter.mjs        # Checks chapter-card completeness
 ├── templates/
-│   ├── MASTER_SETTING.template.md
-│   └── project-files.template.md
-├── demo/                       # Before/After 示例
-├── install.sh                  # 一键安装
-├── README.md / README_ZH.md
-└── poster.png
+│   ├── project-brief.template.md
+│   ├── story-bible.template.md
+│   ├── story-state.template.json
+│   ├── chapter-card.template.md
+│   ├── chapter-log.template.jsonl
+│   └── review.template.json
+├── references/
+│   ├── chapter-types.md
+│   ├── context-loading.md
+│   ├── quality-policy.md
+│   └── decision-variants.md
+└── examples/
+    └── chapter-card.example.md
 ```
-
----
-
-## 设计原则
-
-1. **知识库 + 建议，而非规则引擎**。最终裁决权留给作者。
-2. **最小改动拿最大收益**。不建维护地狱。
-3. **规则服务于文字，不是反过来**。如果一条规则让文字更生硬——无视它。
-4. **每3章至少1章不按流程走**。流程保证下限，破格推高上限。
-
----
-
-## 外部研究来源
-
-v11.0 的设计吸收了以下 2025-2026 年前沿研究成果：
-
-| 来源 | 领域 | 融入内容 |
-|------|------|---------|
-| **InkOS** (Narcooo) | 26维审计+反AI检测 | 反AI探测层+文风指纹 |
-| **Autonovel** (NousResearch) | 对抗式编辑流水线 | 双角色自审+70%阈值 |
-| **Novel-Forge** (v0.7.1) | 21道Guard+Story Contract | 反向刹车+事件冷却+门禁 |
-| **NarrativeLoom** (CHI 2026 北大) | 概率陷阱+BVSR理论 | 概率陷阱认知层+平行预写 |
-| **StoryScope** (UMD+DeepMind) | 93.2%叙事指纹检测 | 叙事指纹防护+闲笔强制 |
-| **DeepWriter** (AAAI 2026) | 多智能体合著 | 三型分流理论验证 |
-| **TianMing Skill** | 渐进披露+指令路由 | HOT/WARM/COLD分层加载 |
-| **Novel-Harness** | 三层记忆架构 | 记忆分层设计 |
-
----
 
 ## License
 

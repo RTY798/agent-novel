@@ -1,5 +1,6 @@
-# Assets directory — local only, not published
-assets/
-
-# Node
 node_modules/
+projects/*/drafts/
+projects/*/reviews/
+projects/*/chapters/
+*.log
+.DS_Store

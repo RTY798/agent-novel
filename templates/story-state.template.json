@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "chapter": 0,
+  "clock": { "day": 0, "time": "08:00", "timezone": "Asia/Shanghai" },
+  "characters": {
+    "主角名": {
+      "location": "起始地点",
+      "condition": "健康",
+      "inventory": [],
+      "knowledge": []
+    }
+  },
+  "resources": {},
+  "relationships": {},
+  "active_hooks": [],
+  "continuity_locks": []
+}
